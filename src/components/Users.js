@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Component } from 'react';
 import User from './User';
 
 import classes from './Users.module.css';
@@ -9,14 +9,24 @@ const DUMMY_USERS = [
   { id: 'u3', name: 'Julie' },
 ];
 
-const Users = () => {
-  const [showUsers, setShowUsers] = useState(true);
+class Users extends Component {
+  constructor() {
+    super();
+    //state in class base must be obj
+    this.userState = {
+      showUsers: true,
+      more: 'TEST', // jika line 23 di eksekusi maka key ini akan tetap sama
+    };
+  }
 
-  const toggleUsersHandler = () => {
-    setShowUsers((curState) => !curState);
-  };
+  toggleUsersHandler() {
+    //this will merges obj, not overwrite it. NOT LIKE FUNCTIONAL COMPONENT
+    this.setState((prev) => {
+      return { showUsers: !prev.showUsers };
+    });
+  }
 
-  const usersList = (
+  usersList = (
     <ul>
       {DUMMY_USERS.map((user) => (
         <User key={user.id} name={user.name} />
@@ -24,14 +34,41 @@ const Users = () => {
     </ul>
   );
 
-  return (
-    <div className={classes.users}>
-      <button onClick={toggleUsersHandler}>
-        {showUsers ? 'Hide' : 'Show'} Users
-      </button>
-      {showUsers && usersList}
-    </div>
-  );
-};
+  render() {
+    return (
+      <div className={classes.users}>
+        <button onClick={this.toggleUsersHandler.bind(this)}>
+          {this.state.showUsers ? 'Hide' : 'Show'} Users
+        </button>
+        {this.state.showUsers && this.usersList}
+      </div>
+    );
+  }
+}
+
+// const Users = () => {
+//   const [showUsers, setShowUsers] = useState(true);
+
+//   const toggleUsersHandler = () => {
+//     setShowUsers((curState) => !curState);
+//   };
+
+//   const usersList = (
+//     <ul>
+//       {DUMMY_USERS.map((user) => (
+//         <User key={user.id} name={user.name} />
+//       ))}
+//     </ul>
+//   );
+
+//   return (
+//     <div className={classes.users}>
+//       <button onClick={toggleUsersHandler}>
+//         {showUsers ? 'Hide' : 'Show'} Users
+//       </button>
+//       {showUsers && usersList}
+//     </div>
+//   );
+// };
 
 export default Users;
